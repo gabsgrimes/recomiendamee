@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Juego: Recomiéndame Algo</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f1f5f9;
+      padding: 20px;
+      max-width: 600px;
+      margin: auto;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    h1 {
+      color: #0f172a;
+      text-align: center;
+    }
+    label {
+      display: block;
+      margin: 10px 0 5px;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 15px;
+      border-radius: 6px;
+      border: 1px solid #cbd5e1;
+    }
+    button {
+      background-color: #0ea5e9;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0284c7;
+    }
+    .resultado {
+      background-color: #e2e8f0;
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 20px;
+      text-align: center;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎬 Recomiéndame Algo</h1>
+  <form id="formulario">
+    <label for="nombre">Nombre:</label>
+    <input type="text" id="nombre" required>
+
+    <label for="edad">Edad:</label>
+    <input type="number" id="edad" min="8" required>
+
+    <label for="accion">¿Te gusta la acción? (1-5):</label>
+    <input type="number" id="accion" min="1" max="5" required>
+
+    <label for="romance">¿Te gusta el romance? (1-5):</label>
+    <input type="number" id="romance" min="1" max="5" required>
+
+    <label for="scifi">¿Te gusta la ciencia ficción? (1-5):</label>
+    <input type="number" id="scifi" min="1" max="5" required>
+
+    <label for="terror">¿Te gusta el terror? (1-5):</label>
+    <input type="number" id="terror" min="1" max="5" required>
+
+    <button type="submit">Obtener recomendación</button>
+  </form>
+
+  <div class="resultado" id="resultado"></div>
+
+  <script>
+    const peliculas = {
+      accion: ["John Wick", "Misión Imposible", "Avengers: Endgame", "Mad Max: Fury Road"],
+      romance: ["Titanic", "El diario de una pasión", "A todos los chicos de los que me enamoré", "Orgullo y Prejuicio"],
+      scifi: ["Interestelar", "Matrix", "Blade Runner 2049", "El origen"],
+      terror: ["El Conjuro", "Actividad Paranormal", "Hereditary", "IT"]
+    };
+
+    let ultimaRecomendacion = [];
+
+    document.getElementById("formulario").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const nombre = document.getElementById("nombre").value;
+      const edad = parseInt(document.getElementById("edad").value);
+      const accion = parseInt(document.getElementById("accion").value);
+      const romance = parseInt(document.getElementById("romance").value);
+      const scifi = parseInt(document.getElementById("scifi").value);
+      const terror = parseInt(document.getElementById("terror").value);
+
+      const gustos = { accion, romance, scifi, terror };
+      let recomendaciones = [];
+
+      for (let genero in gustos) {
+        if (gustos[genero] === 5) {
+          const opciones = peliculas[genero].filter(p => !ultimaRecomendacion.includes(p));
+          let eleccion = opciones.length > 0 ? opciones[Math.floor(Math.random() * opciones.length)] : peliculas[genero][Math.floor(Math.random() * peliculas[genero].length)];
+          recomendaciones.push(`${genero.toUpperCase()}: "${eleccion}"`);
+          ultimaRecomendacion.push(eleccion);
+        }
+      }
+
+      if (recomendaciones.length === 0) {
+        const preferido = Object.keys(gustos).reduce((a, b) => gustos[a] >= gustos[b] ? a : b);
+        const opciones = peliculas[preferido].filter(p => !ultimaRecomendacion.includes(p));
+        const recomendacion = opciones.length > 0 ? opciones[Math.floor(Math.random() * opciones.length)] : peliculas[preferido][Math.floor(Math.random() * peliculas[preferido].length)];
+        ultimaRecomendacion = [recomendacion];
+        recomendaciones.push(`Basado en tus gustos, te recomendamos: "${recomendacion}"`);
+      }
+
+      document.getElementById("resultado").innerText = `Hola ${nombre}, tus recomendaciones son:\n\n${recomendaciones.join("\n")}`;
+
+      // Enviar a Google Sheets
+      fetch("https://script.google.com/macros/s/AKfycbylur1SdUCbT3SXftwMRBiKQx0rZChTqLFT1FBZ6VFAQVBrKxg0U3qGbYvHzzOUajFV/exec", {
+        method: "POST",
+        mode: "no-cors",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ nombre, edad, accion, romance, scifi, terror })
+      });
+    });
+  </script>
+</body>
+</html>
