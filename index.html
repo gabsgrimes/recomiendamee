@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html>  
 <html lang="es">
 <head>
   <meta charset="UTF-8">
@@ -12,7 +12,7 @@
       max-width: 600px;
       margin: auto;
       border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      box-shadow: 0 4 10px rgba(0,0,0,0.1);
     }
     h1 {
       color: #0f172a;
@@ -38,13 +38,32 @@
     button:hover {
       background-color: #0284c7;
     }
-    .resultado {
-      background-color: #e2e8f0;
-      padding: 15px;
-      border-radius: 8px;
-      margin-top: 20px;
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.6);
+    }
+    .modal-content {
+      background-color: #fff;
+      margin: 15% auto;
+      padding: 20px;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 500px;
       text-align: center;
+    }
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
       font-weight: bold;
+      cursor: pointer;
     }
   </style>
 </head>
@@ -72,14 +91,39 @@
     <button type="submit">Obtener recomendación</button>
   </form>
 
-  <div class="resultado" id="resultado"></div>
+  <div id="modal" class="modal">
+    <div class="modal-content">
+      <span class="close" id="cerrar">&times;</span>
+      <div id="resultado"></div>
+    </div>
+  </div>
 
   <script>
     const peliculas = {
-      accion: ["John Wick", "Misión Imposible", "Avengers: Endgame", "Mad Max: Fury Road"],
-      romance: ["Titanic", "El diario de una pasión", "A todos los chicos de los que me enamoré", "Orgullo y Prejuicio"],
-      scifi: ["Interestelar", "Matrix", "Blade Runner 2049", "El origen"],
-      terror: ["El Conjuro", "Actividad Paranormal", "Hereditary", "IT"]
+      accion: [
+        { nombre: "John Wick" },
+        { nombre: "Misión Imposible" },
+        { nombre: "Avengers: Endgame" },
+        { nombre: "Mad Max: Fury Road" }
+      ],
+      romance: [
+        { nombre: "Titanic" },
+        { nombre: "El diario de una pasión" },
+        { nombre: "A todos los chicos de los que me enamoré" },
+        { nombre: "Orgullo y Prejuicio" }
+      ],
+      scifi: [
+        { nombre: "Interestelar" },
+        { nombre: "Matrix" },
+        { nombre: "Blade Runner 2049" },
+        { nombre: "El origen" }
+      ],
+      terror: [
+        { nombre: "El Conjuro" },
+        { nombre: "Actividad Paranormal" },
+        { nombre: "Hereditary" },
+        { nombre: "IT" }
+      ]
     };
 
     let ultimaRecomendacion = [];
@@ -96,27 +140,29 @@
 
       const gustos = { accion, romance, scifi, terror };
       let recomendaciones = [];
+      let htmlResultado = `Hola ${nombre}, tus recomendaciones son:<br><br>`;
 
       for (let genero in gustos) {
         if (gustos[genero] === 5) {
-          const opciones = peliculas[genero].filter(p => !ultimaRecomendacion.includes(p));
+          const opciones = peliculas[genero].filter(p => !ultimaRecomendacion.includes(p.nombre));
           let eleccion = opciones.length > 0 ? opciones[Math.floor(Math.random() * opciones.length)] : peliculas[genero][Math.floor(Math.random() * peliculas[genero].length)];
-          recomendaciones.push(`${genero.toUpperCase()}: "${eleccion}"`);
-          ultimaRecomendacion.push(eleccion);
+          recomendaciones.push(eleccion.nombre);
+          ultimaRecomendacion.push(eleccion.nombre);
+          htmlResultado += `${genero.toUpperCase()}: "${eleccion.nombre}"<br>`;
         }
       }
 
       if (recomendaciones.length === 0) {
         const preferido = Object.keys(gustos).reduce((a, b) => gustos[a] >= gustos[b] ? a : b);
-        const opciones = peliculas[preferido].filter(p => !ultimaRecomendacion.includes(p));
-        const recomendacion = opciones.length > 0 ? opciones[Math.floor(Math.random() * opciones.length)] : peliculas[preferido][Math.floor(Math.random() * peliculas[preferido].length)];
-        ultimaRecomendacion = [recomendacion];
-        recomendaciones.push(`Basado en tus gustos, te recomendamos: "${recomendacion}"`);
+        const opciones = peliculas[preferido].filter(p => !ultimaRecomendacion.includes(p.nombre));
+        const eleccion = opciones.length > 0 ? opciones[Math.floor(Math.random() * opciones.length)] : peliculas[preferido][Math.floor(Math.random() * peliculas[preferido].length)];
+        ultimaRecomendacion = [eleccion.nombre];
+        htmlResultado += `Basado en tus gustos, te recomendamos:<br>"${eleccion.nombre}"<br>`;
       }
 
-      document.getElementById("resultado").innerText = `Hola ${nombre}, tus recomendaciones son:\n\n${recomendaciones.join("\n")}`;
+      document.getElementById("resultado").innerHTML = htmlResultado;
+      document.getElementById("modal").style.display = "block";
 
-      // Enviar a Google Sheets
       fetch("https://script.google.com/macros/s/AKfycbylur1SdUCbT3SXftwMRBiKQx0rZChTqLFT1FBZ6VFAQVBrKxg0U3qGbYvHzzOUajFV/exec", {
         method: "POST",
         mode: "no-cors",
@@ -126,6 +172,18 @@
         body: JSON.stringify({ nombre, edad, accion, romance, scifi, terror })
       });
     });
+
+    document.getElementById("cerrar").onclick = function() {
+      document.getElementById("modal").style.display = "none";
+    };
+
+    window.onclick = function(event) {
+      const modal = document.getElementById("modal");
+      if (event.target === modal) {
+        modal.style.display = "none";
+      }
+    };
   </script>
 </body>
 </html>
+
