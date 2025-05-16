@@ -12,7 +12,7 @@
       max-width: 600px;
       margin: auto;
       border-radius: 10px;
-      box-shadow: 0 4 10px rgba(0,0,0,0.1);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     }
     h1 {
       color: #0f172a;
@@ -65,6 +65,12 @@
       font-weight: bold;
       cursor: pointer;
     }
+    .pelicula-img {
+      width: 100px;
+      margin: 10px auto;
+      display: block;
+      border-radius: 8px;
+    }
   </style>
 </head>
 <body>
@@ -101,28 +107,28 @@
   <script>
     const peliculas = {
       accion: [
-        { nombre: "John Wick" },
-        { nombre: "Misión Imposible" },
-        { nombre: "Avengers: Endgame" },
-        { nombre: "Mad Max: Fury Road" }
+        { nombre: "John Wick", imagen: "https://upload.wikimedia.org/wikipedia/en/9/98/John_Wick_TeaserPoster.jpg" },
+        { nombre: "Misión Imposible", imagen: "https://upload.wikimedia.org/wikipedia/en/b/b5/Mission_Impossible_Fallout_poster.jpg" },
+        { nombre: "Avengers: Endgame", imagen: "https://upload.wikimedia.org/wikipedia/en/0/0d/Avengers_Endgame_poster.jpg" },
+        { nombre: "Mad Max: Fury Road", imagen: "https://upload.wikimedia.org/wikipedia/en/2/23/Mad_Max_Fury_Road.jpg" }
       ],
       romance: [
-        { nombre: "Titanic" },
-        { nombre: "El diario de una pasión" },
-        { nombre: "A todos los chicos de los que me enamoré" },
-        { nombre: "Orgullo y Prejuicio" }
+        { nombre: "Titanic", imagen: "https://upload.wikimedia.org/wikipedia/en/2/22/Titanic_poster.jpg" },
+        { nombre: "El diario de una pasión", imagen: "https://upload.wikimedia.org/wikipedia/en/8/86/Posternotebook.jpg" },
+        { nombre: "A todos los chicos de los que me enamoré", imagen: "https://upload.wikimedia.org/wikipedia/en/7/7b/To_All_the_Boys_I%27ve_Loved_Before_poster.png" },
+        { nombre: "Orgullo y Prejuicio", imagen: "https://upload.wikimedia.org/wikipedia/en/0/03/Prideandprejudiceposter.jpg" }
       ],
       scifi: [
-        { nombre: "Interestelar" },
-        { nombre: "Matrix" },
-        { nombre: "Blade Runner 2049" },
-        { nombre: "El origen" }
+        { nombre: "Interestelar", imagen: "https://upload.wikimedia.org/wikipedia/en/b/bc/Interstellar_film_poster.jpg" },
+        { nombre: "Matrix", imagen: "https://upload.wikimedia.org/wikipedia/en/c/c1/The_Matrix_Poster.jpg" },
+        { nombre: "Blade Runner 2049", imagen: "https://upload.wikimedia.org/wikipedia/en/8/88/Blade_Runner_2049_logo.png" },
+        { nombre: "El origen", imagen: "https://upload.wikimedia.org/wikipedia/en/2/2e/Inception_%282010%29_theatrical_poster.jpg" }
       ],
       terror: [
-        { nombre: "El Conjuro" },
-        { nombre: "Actividad Paranormal" },
-        { nombre: "Hereditary" },
-        { nombre: "IT" }
+        { nombre: "El Conjuro", imagen: "https://upload.wikimedia.org/wikipedia/en/1/1f/Conjuring_poster.jpg" },
+        { nombre: "Actividad Paranormal", imagen: "https://upload.wikimedia.org/wikipedia/en/a/a3/Paranormal_Activity_poster.jpg" },
+        { nombre: "Hereditary", imagen: "https://upload.wikimedia.org/wikipedia/en/d/d2/Hereditary_%282018_film%29.png" },
+        { nombre: "IT", imagen: "https://upload.wikimedia.org/wikipedia/en/5/5a/It_%282017%29_poster.jpg" }
       ]
     };
 
@@ -148,7 +154,7 @@
           let eleccion = opciones.length > 0 ? opciones[Math.floor(Math.random() * opciones.length)] : peliculas[genero][Math.floor(Math.random() * peliculas[genero].length)];
           recomendaciones.push(eleccion.nombre);
           ultimaRecomendacion.push(eleccion.nombre);
-          htmlResultado += `${genero.toUpperCase()}: "${eleccion.nombre}"<br>`;
+          htmlResultado += `${genero.toUpperCase()}: "${eleccion.nombre}"<br><img class='pelicula-img' src="${eleccion.imagen}" alt="${eleccion.nombre}"><br>`;
         }
       }
 
@@ -157,12 +163,13 @@
         const opciones = peliculas[preferido].filter(p => !ultimaRecomendacion.includes(p.nombre));
         const eleccion = opciones.length > 0 ? opciones[Math.floor(Math.random() * opciones.length)] : peliculas[preferido][Math.floor(Math.random() * peliculas[preferido].length)];
         ultimaRecomendacion = [eleccion.nombre];
-        htmlResultado += `Basado en tus gustos, te recomendamos:<br>"${eleccion.nombre}"<br>`;
+        htmlResultado += `Basado en tus gustos, te recomendamos:<br>"${eleccion.nombre}"<br><img class='pelicula-img' src="${eleccion.imagen}" alt="${eleccion.nombre}"><br>`;
       }
 
       document.getElementById("resultado").innerHTML = htmlResultado;
       document.getElementById("modal").style.display = "block";
 
+      // Enviar a Google Sheets
       fetch("https://script.google.com/macros/s/AKfycbylur1SdUCbT3SXftwMRBiKQx0rZChTqLFT1FBZ6VFAQVBrKxg0U3qGbYvHzzOUajFV/exec", {
         method: "POST",
         mode: "no-cors",
@@ -186,4 +193,5 @@
   </script>
 </body>
 </html>
+
 
