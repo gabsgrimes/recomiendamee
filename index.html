@@ -6,38 +6,69 @@
   <title>Juego: Recomiéndame Algo</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background-color: #f1f5f9;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to bottom, #002f5f, #016644);
       padding: 20px;
-      max-width: 600px;
-      margin: auto;
-      border-radius: 10px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
-    h1 {
-      color: #0f172a;
+
+    .container {
+      background: transparent;
+      padding: 30px;
+      border-radius: 15px;
+      width: 90%;
+      max-width: 600px;
+      color: white;
       text-align: center;
     }
+
+    h1 {
+      font-size: 24px;
+      margin-bottom: 30px;
+    }
+
     label {
       display: block;
+      text-align: left;
       margin: 10px 0 5px;
     }
+
     input, select, button {
       width: 100%;
-      padding: 8px;
+      padding: 12px;
       margin-bottom: 15px;
-      border-radius: 6px;
-      border: 1px solid #cbd5e1;
-    }
-    button {
-      background-color: #0ea5e9;
+      border-radius: 30px;
+      border: none;
+      font-size: 16px;
+      background-color: rgba(255, 255, 255, 0.2);
       color: white;
+    }
+
+    input::placeholder {
+      color: #e0e0e0;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      background-color: rgba(255, 255, 255, 0.3);
+    }
+
+    button {
+      background-color: #f4b400;
+      color: black;
+      font-weight: bold;
       border: none;
       cursor: pointer;
     }
+
     button:hover {
-      background-color: #0284c7;
+      background-color: #ddb000;
     }
+
     .modal {
       display: none;
       position: fixed;
@@ -49,15 +80,17 @@
       overflow: auto;
       background-color: rgba(0,0,0,0.6);
     }
+
     .modal-content {
       background-color: #fff;
-      margin: 15% auto;
+      margin: 10% auto;
       padding: 20px;
       border-radius: 10px;
       width: 90%;
       max-width: 500px;
       text-align: center;
     }
+
     .close {
       color: #aaa;
       float: right;
@@ -65,6 +98,7 @@
       font-weight: bold;
       cursor: pointer;
     }
+
     .pelicula-img {
       width: 100px;
       margin: 10px auto;
@@ -74,28 +108,30 @@
   </style>
 </head>
 <body>
-  <h1>🎬 Recomiéndame Algo</h1>
-  <form id="formulario">
-    <label for="nombre">Nombre:</label>
-    <input type="text" id="nombre" required>
+  <div class="container">
+    <h1>🎬 Recomiéndame Algo</h1>
+    <form id="formulario">
+      <label for="nombre">Nombre:</label>
+      <input type="text" id="nombre" required>
 
-    <label for="edad">Edad:</label>
-    <input type="number" id="edad" min="8" required>
+      <label for="edad">Edad:</label>
+      <input type="number" id="edad" min="8" required>
 
-    <label for="accion">¿Te gusta la acción? (1-5):</label>
-    <input type="number" id="accion" min="1" max="5" required>
+      <label for="accion">¿Te gusta la acción? (1-5):</label>
+      <input type="number" id="accion" min="1" max="5" required>
 
-    <label for="romance">¿Te gusta el romance? (1-5):</label>
-    <input type="number" id="romance" min="1" max="5" required>
+      <label for="romance">¿Te gusta el romance? (1-5):</label>
+      <input type="number" id="romance" min="1" max="5" required>
 
-    <label for="scifi">¿Te gusta la ciencia ficción? (1-5):</label>
-    <input type="number" id="scifi" min="1" max="5" required>
+      <label for="scifi">¿Te gusta la ciencia ficción? (1-5):</label>
+      <input type="number" id="scifi" min="1" max="5" required>
 
-    <label for="terror">¿Te gusta el terror? (1-5):</label>
-    <input type="number" id="terror" min="1" max="5" required>
+      <label for="terror">¿Te gusta el terror? (1-5):</label>
+      <input type="number" id="terror" min="1" max="5" required>
 
-    <button type="submit">Obtener recomendación</button>
-  </form>
+      <button type="submit">Obtener recomendación</button>
+    </form>
+  </div>
 
   <div id="modal" class="modal">
     <div class="modal-content">
@@ -169,7 +205,6 @@
       document.getElementById("resultado").innerHTML = htmlResultado;
       document.getElementById("modal").style.display = "block";
 
-      // Enviar a Google Sheets
       fetch("https://script.google.com/macros/s/AKfycbylur1SdUCbT3SXftwMRBiKQx0rZChTqLFT1FBZ6VFAQVBrKxg0U3qGbYvHzzOUajFV/exec", {
         method: "POST",
         mode: "no-cors",
@@ -193,5 +228,6 @@
   </script>
 </body>
 </html>
+
 
 
