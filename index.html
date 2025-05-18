@@ -1,8 +1,8 @@
-<!DOCTYPE html>  
+<!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Juego: Recomiéndame Algo</title>
   <style>
     body {
@@ -123,8 +123,8 @@
       <label for="romance">¿Te gusta el romance? (1-5):</label>
       <input type="number" id="romance" min="1" max="5" required>
 
-      <label for="scifi">¿Te gusta la ciencia ficción? (1-5):</label>
-      <input type="number" id="scifi" min="1" max="5" required>
+      <label for="comedia">¿Te gusta la comedia? (1-5):</label>
+      <input type="number" id="comedia" min="1" max="5" required>
 
       <label for="terror">¿Te gusta el terror? (1-5):</label>
       <input type="number" id="terror" min="1" max="5" required>
@@ -146,7 +146,21 @@
         { nombre: "John Wick", imagen: "https://upload.wikimedia.org/wikipedia/en/9/98/John_Wick_TeaserPoster.jpg" },
         { nombre: "Misión Imposible", imagen: "https://upload.wikimedia.org/wikipedia/en/b/b5/Mission_Impossible_Fallout_poster.jpg" },
         { nombre: "Avengers: Endgame", imagen: "https://upload.wikimedia.org/wikipedia/en/0/0d/Avengers_Endgame_poster.jpg" },
-        { nombre: "Mad Max: Fury Road", imagen: "https://upload.wikimedia.org/wikipedia/en/2/23/Mad_Max_Fury_Road.jpg" }
+        { nombre: "Mad Max: Fury Road", imagen: "https://upload.wikimedia.org/wikipedia/en/2/23/Mad_Max_Fury_Road.jpg" },
+        { nombre: "Gladiador", imagen: "https://upload.wikimedia.org/wikipedia/en/8/8d/Gladiator_ver1.jpg" },
+        { nombre: "Machete", imagen: "https://upload.wikimedia.org/wikipedia/en/7/70/Machete_poster.jpg" },
+        { nombre: "El agente invisible", imagen: "https://upload.wikimedia.org/wikipedia/en/8/8e/The_Gray_Man_poster.jpg" },
+        { nombre: "Sin tiempo para morir", imagen: "https://upload.wikimedia.org/wikipedia/en/3/3d/No_Time_to_Die_poster.jpg" },
+        { nombre: "El tren bala", imagen: "https://upload.wikimedia.org/wikipedia/en/0/0c/Bullet_Train_film_poster.jpg" },
+        { nombre: "Déjà Vu", imagen: "https://upload.wikimedia.org/wikipedia/en/5/5f/DejaVu2006Poster.jpg" },
+        { nombre: "The Equalizer", imagen: "https://upload.wikimedia.org/wikipedia/en/2/20/The_Equalizer_poster.jpg" },
+        { nombre: "Hombre en llamas", imagen: "https://upload.wikimedia.org/wikipedia/en/5/5c/Man_on_Fire_poster.jpg" },
+        { nombre: "Speed: Máxima potencia", imagen: "https://upload.wikimedia.org/wikipedia/en/0/0c/Speed_movie_poster.jpg" },
+        { nombre: "Hero", imagen: "https://upload.wikimedia.org/wikipedia/en/9/9e/Hero_poster.jpg" },
+        { nombre: "Venganza", imagen: "https://upload.wikimedia.org/wikipedia/en/b/bb/Taken_poster.jpg" },
+        { nombre: "Kingsman: Servicio secreto", imagen: "https://upload.wikimedia.org/wikipedia/en/8/8b/Kingsman_The_Secret_Service_poster.jpg" },
+        { nombre: "13 asesinos", imagen: "https://upload.wikimedia.org/wikipedia/en/7/7e/13_Assassins_poster.jpg" },
+        { nombre: "Casino Royale", imagen: "https://upload.wikimedia.org/wikipedia/en/5/5e/Casino_Royale_2_-_UK_cinema_poster.jpg" }
       ],
       romance: [
         { nombre: "Titanic", imagen: "https://upload.wikimedia.org/wikipedia/en/2/22/Titanic_poster.jpg" },
@@ -154,11 +168,11 @@
         { nombre: "A todos los chicos de los que me enamoré", imagen: "https://upload.wikimedia.org/wikipedia/en/7/7b/To_All_the_Boys_I%27ve_Loved_Before_poster.png" },
         { nombre: "Orgullo y Prejuicio", imagen: "https://upload.wikimedia.org/wikipedia/en/0/03/Prideandprejudiceposter.jpg" }
       ],
-      scifi: [
-        { nombre: "Interestelar", imagen: "https://upload.wikimedia.org/wikipedia/en/b/bc/Interstellar_film_poster.jpg" },
-        { nombre: "Matrix", imagen: "https://upload.wikimedia.org/wikipedia/en/c/c1/The_Matrix_Poster.jpg" },
-        { nombre: "Blade Runner 2049", imagen: "https://upload.wikimedia.org/wikipedia/en/8/88/Blade_Runner_2049_logo.png" },
-        { nombre: "El origen", imagen: "https://upload.wikimedia.org/wikipedia/en/2/2e/Inception_%282010%29_theatrical_poster.jpg" }
+      comedia: [
+        { nombre: "Superbad", imagen: "https://upload.wikimedia.org/wikipedia/en/8/8b/Superbad_Poster.png" },
+        { nombre: "¿Qué pasó ayer?", imagen: "https://upload.wikimedia.org/wikipedia/en/b/b9/Hangoverposter09.jpg" },
+        { nombre: "Ted", imagen: "https://upload.wikimedia.org/wikipedia/en/6/62/Ted_poster.jpg" },
+        { nombre: "Loco por Mary", imagen: "https://upload.wikimedia.org/wikipedia/en/e/e1/There%27s_Something_About_Mary_POSTER.jpg" }
       ],
       terror: [
         { nombre: "El Conjuro", imagen: "https://upload.wikimedia.org/wikipedia/en/1/1f/Conjuring_poster.jpg" },
@@ -177,12 +191,12 @@
       const edad = parseInt(document.getElementById("edad").value);
       const accion = parseInt(document.getElementById("accion").value);
       const romance = parseInt(document.getElementById("romance").value);
-      const scifi = parseInt(document.getElementById("scifi").value);
+      const comedia = parseInt(document.getElementById("comedia").value);
       const terror = parseInt(document.getElementById("terror").value);
 
-      const gustos = { accion, romance, scifi, terror };
+      const gustos = { accion, romance, comedia, terror };
       let recomendaciones = [];
-      let htmlResultado = `Hola ${nombre}, tus recomendaciones son:<br><br>`;
+      let htmlResultado = Hola ${nombre}, tus recomendaciones son:<br><br>;
 
       for (let genero in gustos) {
         if (gustos[genero] === 5) {
@@ -190,7 +204,7 @@
           let eleccion = opciones.length > 0 ? opciones[Math.floor(Math.random() * opciones.length)] : peliculas[genero][Math.floor(Math.random() * peliculas[genero].length)];
           recomendaciones.push(eleccion.nombre);
           ultimaRecomendacion.push(eleccion.nombre);
-          htmlResultado += `${genero.toUpperCase()}: "${eleccion.nombre}"<br><img class='pelicula-img' src="${eleccion.imagen}" alt="${eleccion.nombre}"><br>`;
+          htmlResultado += ${genero.toUpperCase()}: "${eleccion.nombre}"<br><img class='pelicula-img' src="${eleccion.imagen}" alt="${eleccion.nombre}"><br>;
         }
       }
 
@@ -199,7 +213,7 @@
         const opciones = peliculas[preferido].filter(p => !ultimaRecomendacion.includes(p.nombre));
         const eleccion = opciones.length > 0 ? opciones[Math.floor(Math.random() * opciones.length)] : peliculas[preferido][Math.floor(Math.random() * peliculas[preferido].length)];
         ultimaRecomendacion = [eleccion.nombre];
-        htmlResultado += `Basado en tus gustos, te recomendamos:<br>"${eleccion.nombre}"<br><img class='pelicula-img' src="${eleccion.imagen}" alt="${eleccion.nombre}"><br>`;
+        htmlResultado += Basado en tus gustos, te recomendamos:<br>"${eleccion.nombre}"<br><img class='pelicula-img' src="${eleccion.imagen}" alt="${eleccion.nombre}"><br>;
       }
 
       document.getElementById("resultado").innerHTML = htmlResultado;
@@ -211,7 +225,7 @@
         headers: {
           "Content-Type": "application/json"
         },
-        body: JSON.stringify({ nombre, edad, accion, romance, scifi, terror })
+        body: JSON.stringify({ nombre, edad, accion, romance, comedia, terror })
       });
     });
 
@@ -228,7 +242,6 @@
   </script>
 </body>
 </html>
-
 
 
 
