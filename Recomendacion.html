@@ -1,0 +1,330 @@
+ <!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Juego: Recomiéndame Algo</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to bottom, #002f5f, #016644);
+      padding: 20px;
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .container {
+      background: transparent;
+      padding: 30px;
+      border-radius: 15px;
+      width: 90%;
+      max-width: 600px;
+      color: white;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 24px;
+      margin-bottom: 30px;
+    }
+
+    label {
+      display: block;
+      text-align: left;
+      margin: 10px 0 5px;
+    }
+
+    input, select, button {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 15px;
+      border-radius: 30px;
+      border: none;
+      font-size: 16px;
+      background-color: rgba(255, 255, 255, 0.2);
+      color: white;
+    }
+
+    input::placeholder {
+      color: #e0e0e0;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      background-color: rgba(255, 255, 255, 0.3);
+    }
+
+    button {
+      background-color: #f4b400;
+      color: black;
+      font-weight: bold;
+      border: none;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #ddb000;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.6);
+    }
+
+    .modal-content {
+      background-color: #fff;
+      margin: 10% auto;
+      padding: 20px;
+      border-radius: 10px;
+      width: 90%;
+      max-width: 500px;
+      text-align: center;
+    }
+
+    .close {
+      color: #aaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .pelicula-img {
+      width: 100px;
+      margin: 10px auto;
+      display: block;
+      border-radius: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🎬 Recomiéndame Algo</h1>
+    <form id="formulario">
+      <label for="nombre">Nombre:</label>
+      <input type="text" id="nombre" required>
+
+      <label for="edad">Edad:</label>
+      <input type="number" id="edad" min="8" required>
+
+      <label for="accion">¿Te gusta la acción? (1-5):</label>
+      <input type="number" id="accion" min="1" max="5" required>
+
+      <label for="romance">¿Te gusta el romance? (1-5):</label>
+      <input type="number" id="romance" min="1" max="5" required>
+
+      <label for="comedia">¿Te gusta la comedia? (1-5):</label>
+      <input type="number" id="comedia" min="1" max="5" required>
+
+      <label for="terror">¿Te gusta el terror? (1-5):</label>
+      <input type="number" id="terror" min="1" max="5" required>
+
+      <button type="submit">Obtener recomendación</button>
+    </form>
+  </div>
+
+  <div id="modal" class="modal">
+    <div class="modal-content">
+      <span class="close" id="cerrar">&times;</span>
+      <div id="resultado"></div>
+    </div>
+  </div>
+
+  <script>
+const peliculas = {
+  accion: [
+         { nombre: "John Wick", imagen: "https://upload.wikimedia.org/wikipedia/en/9/98/John_Wick_TeaserPoster.jpg" },
+    { nombre: "Misión Imposible", imagen: "https://upload.wikimedia.org/wikipedia/en/b/b5/Mission_Impossible_Fallout_poster.jpg" },
+    { nombre: "Avengers: Endgame", imagen: "https://upload.wikimedia.org/wikipedia/en/0/0d/Avengers_Endgame_poster.jpg" },
+    { nombre: "Mad Max: Fury Road", imagen: "https://upload.wikimedia.org/wikipedia/en/2/23/Mad_Max_Fury_Road.jpg" },
+    { nombre: "Gladiador", imagen: "https://upload.wikimedia.org/wikipedia/en/8/8d/Gladiator_ver1.jpg" },
+    { nombre: "Machete", imagen: "https://upload.wikimedia.org/wikipedia/en/7/70/Machete_poster.jpg" },
+    { nombre: "El agente invisible", imagen: "https://upload.wikimedia.org/wikipedia/en/8/8e/The_Gray_Man_poster.jpg" },
+    { nombre: "Sin tiempo para morir", imagen: "https://upload.wikimedia.org/wikipedia/en/3/3d/No_Time_to_Die_poster.jpg" },
+    { nombre: "El tren bala", imagen: "https://upload.wikimedia.org/wikipedia/en/0/0c/Bullet_Train_film_poster.jpg" },
+    { nombre: "Déjà Vu", imagen: "https://upload.wikimedia.org/wikipedia/en/5/5f/DejaVu2006Poster.jpg" },
+    { nombre: "The Equalizer", imagen: "https://upload.wikimedia.org/wikipedia/en/2/20/The_Equalizer_poster.jpg" },
+    { nombre: "Hombre en llamas", imagen: "https://upload.wikimedia.org/wikipedia/en/5/5c/Man_on_Fire_poster.jpg" },
+    { nombre: "Speed: Máxima potencia", imagen: "https://upload.wikimedia.org/wikipedia/en/0/0c/Speed_movie_poster.jpg" },
+    { nombre: "Hero", imagen: "https://upload.wikimedia.org/wikipedia/en/9/9e/Hero_poster.jpg" },
+    { nombre: "Venganza", imagen: "https://upload.wikimedia.org/wikipedia/en/b/bb/Taken_poster.jpg" },
+    { nombre: "Kingsman: Servicio secreto", imagen: "https://upload.wikimedia.org/wikipedia/en/8/8b/Kingsman_The_Secret_Service_poster.jpg" },
+    { nombre: "13 asesinos", imagen: "https://upload.wikimedia.org/wikipedia/en/7/7e/13_Assassins_poster.jpg" },
+    { nombre: "Casino Royale", imagen: "https://upload.wikimedia.org/wikipedia/en/5/5e/Casino_Royale_2_-_UK_cinema_poster.jpg" },
+    { nombre: "The Raid", imagen: "https://upload.wikimedia.org/wikipedia/en/9/9a/The_Raid_2011_poster.jpg" },
+    { nombre: "Duro de matar", imagen: "https://upload.wikimedia.org/wikipedia/en/7/7e/Die_hard.jpg" },
+    { nombre: "Terminator 2", imagen: "https://upload.wikimedia.org/wikipedia/en/8/85/Terminator2poster.jpg" },
+    { nombre: "300", imagen: "https://upload.wikimedia.org/wikipedia/en/5/5c/300poster.jpg" },
+    { nombre: "Matrix", imagen: "https://upload.wikimedia.org/wikipedia/en/c/c1/The_Matrix_Poster.jpg" },
+    { nombre: "Rescatando al soldado Ryan", imagen: "https://upload.wikimedia.org/wikipedia/en/a/ac/Saving_Private_Ryan_poster.jpg" },
+    { nombre: "Top Gun: Maverick", imagen: "https://upload.wikimedia.org/wikipedia/en/2/2e/Top_Gun_Maverick_Poster.jpg" },
+    { nombre: "Batman: El caballero de la noche", imagen: "https://upload.wikimedia.org/wikipedia/en/8/8a/Dark_Knight.jpg" },
+    { nombre: "Los juegos del hambre", imagen: "https://upload.wikimedia.org/wikipedia/en/4/42/HungerGamesPoster.jpg" },
+    { nombre: "Skyfall", imagen: "https://upload.wikimedia.org/wikipedia/en/a/a7/Skyfall_poster.jpg" },
+    { nombre: "Guardianes de la Galaxia", imagen: "https://upload.wikimedia.org/wikipedia/en/8/8f/GOTG_Vol2_poster.jpg" },
+    { nombre: "Deadpool", imagen: "https://upload.wikimedia.org/wikipedia/en/4/46/Deadpool_poster.jpg" },
+    { nombre: "Logan", imagen: "https://upload.wikimedia.org/wikipedia/en/3/37/Logan_2017_poster.jpg" },
+    { nombre: "Iron Man", imagen: "https://upload.wikimedia.org/wikipedia/en/7/70/Iron_Man_poster.jpg" },
+    { nombre: "Capitán América: Civil War", imagen: "https://upload.wikimedia.org/wikipedia/en/5/53/Captain_America_Civil_War_poster.jpg" },
+    { nombre: "Transformers", imagen: "https://upload.wikimedia.org/wikipedia/en/6/66/Transformers07.jpg" },
+    { nombre: "Black Panther", imagen: "https://upload.wikimedia.org/wikipedia/en/0/0c/Black_Panther_film_poster.jpg" },
+    { nombre: "Pacific Rim", imagen: "https://upload.wikimedia.org/wikipedia/en/f/f3/Pacific_Rim_FilmPoster.jpeg" },
+    { nombre: "El Transportador", imagen: "https://upload.wikimedia.org/wikipedia/en/b/b9/The_Transporter.jpg" },
+    { nombre: "Hobbs & Shaw", imagen: "https://upload.wikimedia.org/wikipedia/en/9/96/Hobbs_%26_Shaw_poster.jpg" },
+    { nombre: "Los Indestructibles", imagen: "https://upload.wikimedia.org/wikipedia/en/0/09/The_Expendables_2010_poster.jpg" },
+    { nombre: "Rápidos y Furiosos 7", imagen: "https://upload.wikimedia.org/wikipedia/en/b/be/Furious_7_poster.jpg" },
+    { nombre: "Rambo: Last Blood", imagen: "https://upload.wikimedia.org/wikipedia/en/9/97/Rambo_Last_Blood_poster.png" },
+    { nombre: "El renegado", imagen: "https://upload.wikimedia.org/wikipedia/en/9/9a/Walking_Tall_poster.jpg" },
+    { nombre: "Atomic Blonde", imagen: "https://upload.wikimedia.org/wikipedia/en/7/78/Atomic_Blonde_poster.png" },
+    { nombre: "Oldboy", imagen: "https://upload.wikimedia.org/wikipedia/en/6/67/Oldboy2013Poster.jpg" },
+    { nombre: "Looper", imagen: "https://upload.wikimedia.org/wikipedia/en/0/0a/Looper_poster.jpg" },
+    { nombre: "The Bourne Identity", imagen: "https://upload.wikimedia.org/wikipedia/en/a/ae/BourneIdentityfilm.jpg" },
+    { nombre: "Shooter", imagen: "https://upload.wikimedia.org/wikipedia/en/d/d2/Shooter_poster.jpg" },
+    { nombre: "La sombra del espía", imagen: "https://upload.wikimedia.org/wikipedia/en/f/fc/The_Spy_Who_Came_in_from_the_Cold_poster.jpg" }
+
+      ],
+      romance: [
+       { nombre: "Titanic", imagen: "https://upload.wikimedia.org/wikipedia/en/2/22/Titanic_poster.jpg" },
+  { nombre: "El diario de una pasión", imagen: "https://upload.wikimedia.org/wikipedia/en/8/86/Posternotebook.jpg" },
+  { nombre: "A todos los chicos de los que me enamoré", imagen: "https://upload.wikimedia.org/wikipedia/en/7/7b/To_All_the_Boys_I%27ve_Loved_Before_poster.png" },
+  { nombre: "Orgullo y Prejuicio", imagen: "https://upload.wikimedia.org/wikipedia/en/0/03/Prideandprejudiceposter.jpg" },
+  { nombre: "La La Land", imagen: "https://upload.wikimedia.org/wikipedia/en/a/ab/La_La_Land_%28film%29.png" },
+  { nombre: "Yo antes de ti", imagen: "https://upload.wikimedia.org/wikipedia/en/7/70/Me_Before_You_%28film%29.jpg" },
+  { nombre: "Bajo la misma estrella", imagen: "https://upload.wikimedia.org/wikipedia/en/e/e4/The_Fault_in_Our_Stars_%28film%29_poster.jpg" },
+  { nombre: "Posdata: Te amo", imagen: "https://upload.wikimedia.org/wikipedia/en/3/3f/P.S._I_Love_You_%28film%29.jpg" },
+  { nombre: "One Day", imagen: "https://upload.wikimedia.org/wikipedia/en/a/a0/One_Day_Poster.jpg" },
+  { nombre: "Amélie", imagen: "https://upload.wikimedia.org/wikipedia/en/5/53/Amelie_poster.jpg" },
+  { nombre: "El lado bueno de las cosas", imagen: "https://upload.wikimedia.org/wikipedia/en/1/1b/Silver_Linings_Playbook_Poster.jpg" },
+  { nombre: "Eterno resplandor de una mente sin recuerdos", imagen: "https://upload.wikimedia.org/wikipedia/en/6/62/Eternal_Sunshine_of_the_Spotless_Mind.png" },
+  { nombre: "500 días con ella", imagen: "https://upload.wikimedia.org/wikipedia/en/d/df/500_Days_of_Summer_poster.png" },
+  { nombre: "Notting Hill", imagen: "https://upload.wikimedia.org/wikipedia/en/3/38/NottingHillRobertsGrant.jpg" },
+  { nombre: "Antes del amanecer", imagen: "https://upload.wikimedia.org/wikipedia/en/d/da/Before_Sunrise_poster.jpg" },
+  { nombre: "Amor y otras drogas", imagen: "https://upload.wikimedia.org/wikipedia/en/7/76/Love_and_other_drugs.jpg" },
+  { nombre: "Ghost", imagen: "https://upload.wikimedia.org/wikipedia/en/e/e3/Ghost_%281990_film%29_poster.png" },
+  { nombre: "Un lugar llamado Notting Hill", imagen: "https://upload.wikimedia.org/wikipedia/en/3/38/NottingHillRobertsGrant.jpg" },
+  { nombre: "Mientras dormías", imagen: "https://upload.wikimedia.org/wikipedia/en/1/13/While_You_Were_Sleeping_poster.jpg" },
+  { nombre: "Querido John", imagen: "https://upload.wikimedia.org/wikipedia/en/1/16/Dear_John_poster.jpg" },
+      ],
+      comedia: [
+      { nombre: "Superbad", imagen: "https://upload.wikimedia.org/wikipedia/en/8/8b/Superbad_Poster.png" },
+  { nombre: "¿Qué pasó ayer?", imagen: "https://upload.wikimedia.org/wikipedia/en/b/b9/Hangoverposter09.jpg" },
+  { nombre: "Ted", imagen: "https://upload.wikimedia.org/wikipedia/en/6/62/Ted_poster.jpg" },
+  { nombre: "Loco por Mary", imagen: "https://upload.wikimedia.org/wikipedia/en/e/e1/There%27s_Something_About_Mary_POSTER.jpg" },
+  { nombre: "Legalmente Rubia", imagen: "https://upload.wikimedia.org/wikipedia/en/d/d7/Legally_Blonde_film_poster.png" },
+  { nombre: "Un jefe en pañales", imagen: "https://upload.wikimedia.org/wikipedia/en/0/0e/The_Boss_Baby_poster.jpg" },
+  { nombre: "La máscara", imagen: "https://upload.wikimedia.org/wikipedia/en/0/09/The_Mask_%28film%29_poster.jpg" },
+  { nombre: "Zoolander", imagen: "https://upload.wikimedia.org/wikipedia/en/d/d6/Zoolander_film_poster.jpg" },
+  { nombre: "Mi abuela es un peligro", imagen: "https://upload.wikimedia.org/wikipedia/en/6/6a/Bigmommahouselogo.jpg" },
+  { nombre: "Click: Perdiendo el control", imagen: "https://upload.wikimedia.org/wikipedia/en/7/7f/Click_film.jpg" },
+  { nombre: "Escuela de Rock", imagen: "https://upload.wikimedia.org/wikipedia/en/1/11/School_of_Rock_Poster.jpg" },
+  { nombre: "Este cuerpo no es mío", imagen: "https://upload.wikimedia.org/wikipedia/en/6/66/The_Hot_Chick.jpg" },
+  { nombre: "Los cazafantasmas", imagen: "https://upload.wikimedia.org/wikipedia/en/2/2c/Ghostbusters_%281984%29_theatrical_poster.png" },
+  { nombre: "Kung Fu Panda", imagen: "https://upload.wikimedia.org/wikipedia/en/7/76/Kungfupanda.jpg" },
+  { nombre: "Intensamente", imagen: "https://upload.wikimedia.org/wikipedia/en/0/0a/Inside_Out_%282015_film%29_poster.jpg" },
+  { nombre: "Shrek", imagen: "https://upload.wikimedia.org/wikipedia/en/3/39/Shrek.jpg" },
+  { nombre: "Hombres de negro", imagen: "https://upload.wikimedia.org/wikipedia/en/f/fb/Men_in_Black_Poster.jpg" },
+  { nombre: "Scary Movie", imagen: "https://upload.wikimedia.org/wikipedia/en/d/db/Scary_Movie_film.jpg" },
+  { nombre: "Una esposa de mentira", imagen: "https://upload.wikimedia.org/wikipedia/en/d/d8/JustGoWithItPoster.jpg" },
+  { nombre: "Norbit", imagen: "https://upload.wikimedia.org/wikipedia/en/f/fc/Norbit_poster.jpg" },
+      ],
+      terror: [
+       { nombre: "El Conjuro", imagen: "https://upload.wikimedia.org/wikipedia/en/1/1f/Conjuring_poster.jpg" },
+  { nombre: "Actividad Paranormal", imagen: "https://upload.wikimedia.org/wikipedia/en/a/a3/Paranormal_Activity_poster.jpg" },
+  { nombre: "Hereditary", imagen: "https://upload.wikimedia.org/wikipedia/en/d/d2/Hereditary_%282018_film%29.png" },
+  { nombre: "IT", imagen: "https://upload.wikimedia.org/wikipedia/en/5/5a/It_%282017%29_poster.jpg" },
+  { nombre: "El Aro", imagen: "https://upload.wikimedia.org/wikipedia/en/e/e7/The_Ring_movie_poster.jpg" },
+  { nombre: "La maldición", imagen: "https://upload.wikimedia.org/wikipedia/en/f/f4/The_Grudge_2004_poster.jpg" },
+  { nombre: "Insidious", imagen: "https://upload.wikimedia.org/wikipedia/en/2/2d/Insidious_poster.jpg" },
+  { nombre: "Siniestro", imagen: "https://upload.wikimedia.org/wikipedia/en/d/d8/Sinister2012Poster.jpg" },
+  { nombre: "Annabelle", imagen: "https://upload.wikimedia.org/wikipedia/en/f/fd/Annabelle_%282014_film%29.jpg" },
+  { nombre: "La noche del demonio", imagen: "https://upload.wikimedia.org/wikipedia/en/c/c9/Insidious_The_Last_Key.jpg" },
+  { nombre: "Destino final", imagen: "https://upload.wikimedia.org/wikipedia/en/b/b4/Final_Destination_Poster.jpg" },
+  { nombre: "Hostel", imagen: "https://upload.wikimedia.org/wikipedia/en/6/64/Hostel_poster.jpg" },
+  { nombre: "La casa de cera", imagen: "https://upload.wikimedia.org/wikipedia/en/f/f7/House_of_Wax_movie.jpg" },
+  { nombre: "La cabaña del terror", imagen: "https://upload.wikimedia.org/wikipedia/en/e/e5/The_Cabin_in_the_Woods_%28poster%29.jpg" },
+  { nombre: "El bebé de Rosemary", imagen: "https://upload.wikimedia.org/wikipedia/en/5/57/Rosemarys_baby.jpg" },
+  { nombre: "El exorcista", imagen: "https://upload.wikimedia.org/wikipedia/en/7/79/Exorcist_ver2.jpg" },
+  { nombre: "El resplandor", imagen: "https://upload.wikimedia.org/wikipedia/en/2/25/The_Shining_poster.jpg" },
+  { nombre: "Nosferatu", imagen: "https://upload.wikimedia.org/wikipedia/en/4/43/Nosferatuposter.jpg" },
+  { nombre: "Saw", imagen: "https://upload.wikimedia.org/wikipedia/en/5/56/Saw_official_poster.jpg" },
+  { nombre: "Cementerio de mascotas", imagen: "https://upload.wikimedia.org/wikipedia/en/2/26/Pet_Sematary.jpg" },
+      ]
+    };
+
+
+document.getElementById("formulario").addEventListener("submit", function (e) {
+  e.preventDefault();
+
+  const nombre = document.getElementById("nombre").value;
+  const edad = parseInt(document.getElementById("edad").value);
+  const accion = parseInt(document.getElementById("accion").value);
+  const romance = parseInt(document.getElementById("romance").value);
+  const comedia = parseInt(document.getElementById("comedia").value);
+  const terror = parseInt(document.getElementById("terror").value);
+
+  // Enviar a Google Sheets
+  fetch("https://script.google.com/macros/s/AKfycbztUU0L6_lhP48tKZ9Bif3dvN6YdmcxS6QWNN4Kead2ZkVWsBGonQnn1qt1Xx6oeiYE4A/exec", {
+    method: "POST",
+    mode: "no-cors",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      nombre,
+      edad,
+      accion,
+      romance,
+      comedia,
+      terror
+    })
+  });
+
+ const recomendaciones = [];
+
+  if (accion === 5 && peliculas.accion.length > 0) {
+    const peli = peliculas.accion[Math.floor(Math.random() * peliculas.accion.length)];
+    recomendaciones.push(`<strong>Acción:</strong> ${peli.nombre}<br><img class="pelicula-img" src="${peli.imagen}" alt="${peli.nombre}">`);
+  }
+
+  if (romance === 5 && peliculas.romance.length > 0) {
+    const peli = peliculas.romance[Math.floor(Math.random() * peliculas.romance.length)];
+    recomendaciones.push(`<strong>Romance:</strong> ${peli.nombre}<br><img class="pelicula-img" src="${peli.imagen}" alt="${peli.nombre}">`);
+  }
+
+  if (comedia === 5 && peliculas.comedia.length > 0) {
+    const peli = peliculas.comedia[Math.floor(Math.random() * peliculas.comedia.length)];
+    recomendaciones.push(`<strong>Comedia:</strong> ${peli.nombre}<br><img class="pelicula-img" src="${peli.imagen}" alt="${peli.nombre}">`);
+  }
+
+  if (terror === 5 && peliculas.terror && peliculas.terror.length > 0) {
+    const peli = peliculas.terror[Math.floor(Math.random() * peliculas.terror.length)];
+    recomendaciones.push(`<strong>Terror:</strong> ${peli.nombre}<br><img class="pelicula-img" src="${peli.imagen}" alt="${peli.nombre}">`);
+  }
+
+  const resultado = document.getElementById('resultado');
+  if (recomendaciones.length > 0) {
+    resultado.innerHTML = `<h2>¡Hola, ${nombre}!</h2><p>Basado en tus gustos, te recomendamos:</p>` + recomendaciones.join('<hr>');
+  } else {
+    resultado.innerHTML = `<h2>¡Hola, ${nombre}!</h2><p>No hay recomendaciones disponibles porque no puntuaste con 5 ningún género.</p>`;
+  }
+
+  document.getElementById('modal').style.display = 'block';
+});
+
+document.getElementById('cerrar').onclick = function() {
+  document.getElementById('modal').style.display = 'none';
+}
+  </script>
+</body>
+</html>
+
